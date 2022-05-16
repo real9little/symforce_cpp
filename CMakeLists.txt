@@ -16,10 +16,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 option(SYMFORCE_BUILD_OPT "Build symforce_opt and related targets for optimization" ON)
 option(SYMFORCE_BUILD_EXAMPLES "Build the examples" ON)
 option(SYMFORCE_BUILD_TESTS "Build the tests" ON)
-option(SYMFORCE_BUILD_STATIC_LIBRARIES
-        "Build libraries as static (symforce_cholesky is always built as shared)"
-        OFF
-        )
+option(SYMFORCE_BUILD_STATIC_LIBRARIES "Build libraries as static (symforce_cholesky is always built as shared)" OFF )
 
 find_program(SYMFORCE_DEFAULT_PYTHON python3 NO_CACHE)
 set(SYMFORCE_PYTHON "${SYMFORCE_DEFAULT_PYTHON}" CACHE STRING "Python executable to use")
