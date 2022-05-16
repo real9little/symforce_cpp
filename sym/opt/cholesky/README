@@ -1,0 +1,3 @@
+This directory is self-contained and does not include any external SymForce code.
+
+It is built as its own shared library in symforce/CMakeLists.txt.

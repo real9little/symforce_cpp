@@ -1,0 +1,23 @@
+# Required by black, but not specified by our version of black
+click~=8.0.4
+
+argh
+black[jupyter]==21.12b0
+clang-format
+cython
+graphviz
+Jinja2~=3.0.3
+mypy==0.910
+numpy
+pybind11-stubgen
+pylint
+scipy
+sympy==1.10.1
+types-jinja2
+types-pygments
+types-setuptools
+
+-r docs/requirements.txt
+
+-r third_party/skymarshal/requirements.txt
+-e third_party/skymarshal
