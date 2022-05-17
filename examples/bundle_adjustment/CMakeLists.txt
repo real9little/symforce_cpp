@@ -1,0 +1,2 @@
+add_executable(bundle_adjustment run_bundle_adjustment.cc build_example_state.cc)
+target_link_libraries(bundle_adjustment symforce_gen symforce_opt)

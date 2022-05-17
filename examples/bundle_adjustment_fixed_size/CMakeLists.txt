@@ -1,0 +1,3 @@
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/gen/cpp)
+add_executable(bundle_adjustment_fixed_size run_bundle_adjustment.cc build_example_state.cc)
+target_link_libraries(bundle_adjustment_fixed_size symforce_gen symforce_opt)

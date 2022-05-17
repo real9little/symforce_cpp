@@ -99,6 +99,24 @@ add_skymarshal_bindings(eigen_lcm
 
 add_custom_target(symforce_eigen_lcm_py ALL DEPENDS eigen_lcm_py)
 
+macro(configure_files SOURCE_DIR TARGET_DIR)
+    message(STATUS "Configuring directory ${TARGET_DIR}")
+    make_directory(${TARGET_DIR})
+
+    file(GLOB FILES RELATIVE ${SOURCE_DIR} ${SOURCE_DIR}/*)
+    foreach(FILE_I ${FILES})
+        set(SOURCE_PATH ${SOURCE_DIR}/${FILE_I})
+        if(NOT IS_DIRECTORY ${SOURCE_PATH})
+            message(STATUS "Configuring file ${FILE_I}")
+            configure_file(
+                    ${SOURCE_PATH}
+                    ${TARGET_DIR}/${FILE_I}
+                    @ONLY)
+        endif(NOT IS_DIRECTORY ${SOURCE_PATH})
+    endforeach(FILE_I)
+endmacro(configure_files)
+
+configure_files(${CMAKE_CURRENT_BINARY_DIR}/lcmtypes/cpp/lcmtypes/sym ${CMAKE_SOURCE_DIR}/lcmtypes/sym COPYONLY)
 # Get SymForce version
 execute_process(
         COMMAND ${SYMFORCE_PYTHON} -c "from _version import version; print(version, end='')"
@@ -142,3 +160,4 @@ target_include_directories(
 
 
 add_subdirectory(sym/opt)
+add_subdirectory(examples)
