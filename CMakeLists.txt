@@ -21,6 +21,10 @@ option(SYMFORCE_BUILD_STATIC_LIBRARIES "Build libraries as static (symforce_chol
 find_program(SYMFORCE_DEFAULT_PYTHON python3 NO_CACHE)
 set(SYMFORCE_PYTHON "${SYMFORCE_DEFAULT_PYTHON}" CACHE STRING "Python executable to use")
 
+set(SYMFORCE_EIGEN_TARGET "Eigen3::Eigen" CACHE STRING
+        "Target to depend on for Eigen. Default is to find Eigen with find_package."
+        )
+
 if(SYMFORCE_BUILD_STATIC_LIBRARIES)
     set(SYMFORCE_LIBRARY_TYPE STATIC)
 else()
@@ -29,13 +33,39 @@ endif()
 
 include(FetchContent)
 
+if(SYMFORCE_EIGEN_TARGET STREQUAL "Eigen3::Eigen")
+    find_package(Eigen3 QUIET)
+    if(NOT Eigen3_FOUND)
+        message(STATUS "Eigen3 not found, adding with FetchContent")
+        function(add_eigen)
+            FetchContent_Declare(
+                    eigen3
+                    GIT_REPOSITORY https://gitlab.com/libeigen/eigen
+                    GIT_TAG 3147391d946bb4b6c68edd901f2add6ac1f31f8c  # release 3.4.0
+                    GIT_SHALLOW TRUE
+            )
 
-# Include eigen from cmake
-set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
-find_package(Eigen3 REQUIRED)
-include_directories(
-        ${EIGEN3_INCLUDE_DIR}
-)
+            set(EIGEN_BUILD_DOC OFF CACHE BOOL "Don't build Eigen docs")
+            set(BUILD_TESTING OFF CACHE BOOL "Don't build Eigen tests")
+            set(EIGEN_BUILD_PKGCONFIG OFF CACHE BOOL "Don't build Eigen pkg-config")
+            FetchContent_MakeAvailable(eigen3)
+        endfunction()
+
+        add_eigen()
+
+        # Enable use of Eigen3_ROOT, which is necessary for sophus to be able to find Eigen when
+        # included this way
+        # See https://cmake.org/cmake/help/latest/policy/CMP0074.html
+        set(CMAKE_POLICY_DEFAULT_CMP0074 NEW CACHE STRING "" FORCE)
+        set(Eigen3_ROOT "${FETCHCONTENT_BASE_DIR}/eigen3-src" CACHE PATH "Phooey" FORCE)
+    else()
+        message(STATUS "Eigen found at ${Eigen3_DIR}")
+        include_directories(
+                ${EIGEN3_INCLUDE_DIR}
+        )
+    endif()
+endif()
+
 
 # TODO(aaron): This goes away when we upgrade to Catch2 v3
 add_library(
@@ -96,6 +126,8 @@ setup(
 
 file(GLOB_RECURSE SYMFORCE_GEN_SOURCES CONFIGURE_DEPENDS sym/*.cc)
 file(GLOB_RECURSE SYMFORCE_GEN_HEADERS CONFIGURE_DEPENDS sym/*.tcc sym/*.h)
+list(FILTER SYMFORCE_GEN_SOURCES EXCLUDE REGEX "opt/*")
+list(FILTER SYMFORCE_GEN_HEADERS EXCLUDE REGEX "opt/*")
 add_library(
         symforce_gen
         ${SYMFORCE_LIBRARY_TYPE}

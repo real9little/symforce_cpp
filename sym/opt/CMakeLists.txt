@@ -17,10 +17,10 @@ if (NOT fmt_FOUND)
   message(STATUS "fmt not found, adding with FetchContent")
   function(add_fmt)
     FetchContent_Declare(
-      fmtlib
-      GIT_REPOSITORY https://github.com/fmtlib/fmt
-      GIT_TAG d141cdbeb0fb422a3fb7173b285fd38e0d1772dc # release 8.0.1
-      GIT_SHALLOW TRUE
+            fmtlib
+            GIT_REPOSITORY https://github.com/fmtlib/fmt
+            GIT_TAG d141cdbeb0fb422a3fb7173b285fd38e0d1772dc # release 8.0.1
+            GIT_SHALLOW TRUE
     )
     set(CMAKE_POSITION_INDEPENDENT_CODE True)
     FetchContent_MakeAvailable(fmtlib)
@@ -41,10 +41,10 @@ if (NOT spdlog_FOUND)
     set(SPDLOG_FMT_EXTERNAL ON CACHE INTERNAL "spdlog shouldn't use its bundled fmtlib")
     set(CMAKE_POSITION_INDEPENDENT_CODE True)
     FetchContent_Declare(
-      spdlog
-      GIT_REPOSITORY https://github.com/gabime/spdlog
-      GIT_TAG eb3220622e73a4889eee355ffa37972b3cac3df5 # release 1.9.2
-      GIT_SHALLOW TRUE
+            spdlog
+            GIT_REPOSITORY https://github.com/gabime/spdlog
+            GIT_TAG eb3220622e73a4889eee355ffa37972b3cac3df5 # release 1.9.2
+            GIT_SHALLOW TRUE
     )
     FetchContent_MakeAvailable(spdlog)
   endfunction()
@@ -63,10 +63,10 @@ if (NOT tl_optional_FOUND)
   function(add_tl_optional)
     set(OPTIONAL_ENABLE_TESTS OFF CACHE INTERNAL "tl::optional shouldn't build tests")
     FetchContent_Declare(
-      tl_optional
-      GIT_REPOSITORY https://github.com/TartanLlama/optional
-      GIT_TAG v1.0.0
-      GIT_SHALLOW TRUE
+            tl_optional
+            GIT_REPOSITORY https://github.com/TartanLlama/optional
+            GIT_TAG v1.0.0
+            GIT_SHALLOW TRUE
     )
     FetchContent_MakeAvailable(tl_optional)
 
@@ -85,19 +85,19 @@ endif()
 function(add_metis)
   set(CMAKE_POSITION_INDEPENDENT_CODE True)
   FetchContent_Declare(
-    metis
-    # METIS does not have releases recently.  Previously were using nearly the initial commit on
-    # github, which is newer than the release on the METIS website. All of the releases on github
-    # seem to have memory bugs, which do not appear in this release:
-    URL https://symforce-org.github.io/downloads/metis-5.1.0.tar.gz
-    # GKlib builds some test executables we can't disable without patching
-    PATCH_COMMAND "${CMAKE_CURRENT_SOURCE_DIR}/../../cmake/patch_metis.sh" "${FETCHCONTENT_BASE_DIR}/metis-src"
+          metis
+          # METIS does not have releases recently.  Previously were using nearly the initial commit on
+          # github, which is newer than the release on the METIS website. All of the releases on github
+          # seem to have memory bugs, which do not appear in this release:
+          URL https://symforce-org.github.io/downloads/metis-5.1.0.tar.gz
+          # GKlib builds some test executables we can't disable without patching
+          PATCH_COMMAND "${CMAKE_CURRENT_SOURCE_DIR}/../../cmake/patch_metis.sh" "${FETCHCONTENT_BASE_DIR}/metis-src"
   )
 
   # Tell metis where to find GKlib
   set(GKLIB_PATH
-    "${FETCHCONTENT_BASE_DIR}/metis-src/GKlib" CACHE PATH "Path to GKlib for METIS" FORCE
-  )
+          "${FETCHCONTENT_BASE_DIR}/metis-src/GKlib" CACHE PATH "Path to GKlib for METIS" FORCE
+          )
 
   set(METIS_LIBRARY_TYPE "SHARED" CACHE STRING "Always build METIS as a shared library" FORCE)
 
@@ -121,13 +121,13 @@ add_metis()
 file(GLOB SYMFORCE_CHOLESKY_SOURCES CONFIGURE_DEPENDS cholesky/*.cc)
 file(GLOB SYMFORCE_CHOLESKY_HEADERS CONFIGURE_DEPENDS cholesky/*.h cholesky/*.tcc)
 add_library(
-  symforce_cholesky
-  SHARED
-  ${SYMFORCE_CHOLESKY_SOURCES}
-  ${SYMFORCE_CHOLESKY_HEADERS}
+        symforce_cholesky
+        SHARED
+        ${SYMFORCE_CHOLESKY_SOURCES}
+        ${SYMFORCE_CHOLESKY_HEADERS}
 )
 target_link_libraries(symforce_cholesky metis ${SYMFORCE_EIGEN_TARGET})
-target_include_directories(symforce_cholesky PUBLIC ..)
+target_include_directories(symforce_cholesky PUBLIC ../..)
 
 # ------------------------------------------------------------------------------
 # symforce_opt
@@ -135,18 +135,18 @@ target_include_directories(symforce_cholesky PUBLIC ..)
 file(GLOB_RECURSE SYMFORCE_OPT_SOURCES CONFIGURE_DEPENDS *.cc **/*.cc)
 file(GLOB_RECURSE SYMFORCE_OPT_HEADERS CONFIGURE_DEPENDS *.h **/*.h *.tcc **/*.tcc)
 add_library(
-  symforce_opt
-  ${SYMFORCE_LIBRARY_TYPE}
-  ${SYMFORCE_OPT_SOURCES}
-  ${SYMFORCE_OPT_HEADERS}
+        symforce_opt
+        ${SYMFORCE_LIBRARY_TYPE}
+        ${SYMFORCE_OPT_SOURCES}
+        ${SYMFORCE_OPT_HEADERS}
 )
 target_link_libraries(symforce_opt
-  symforce_gen
-  symforce_cholesky
-  fmt::fmt
-  spdlog::spdlog
-  tl::optional
-  ${SYMFORCE_EIGEN_TARGET}
-)
+        symforce_gen
+        symforce_cholesky
+        fmt::fmt
+        spdlog::spdlog
+        tl::optional
+        ${SYMFORCE_EIGEN_TARGET}
+        )
 
 
